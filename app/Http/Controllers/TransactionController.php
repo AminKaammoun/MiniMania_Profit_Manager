@@ -12,7 +12,8 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        //
+        $transactions = Transaction::all()->toArray();
+        return array_reverse($transactions);
     }
 
     /**
@@ -20,30 +21,47 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $transaction = new Transaction([  
+            'itemId' => $request->input('itemId'),
+            'userId' => $request->input('userId'),
+    
+            'boughtPrice' => $request->input('boughtPrice'),
+            'soldPrice' => $request->input('soldPrice'),
+            'boughtDate' => $request->input('boughtDate'),
+            'soldDate' => $request->input('soldDate'),
+            'profit' => $request->input('profit')
+        ]);
+        $transaction->save();
+
+        return response()->json('Transaction created!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Transaction $transaction)
+    public function show($id)
     {
-        //
+        $transaction = Transaction::find($id);
+        return response()->json($transaction);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Transaction $transaction)
+    public function update(Request $request, $id)
     {
-        //
+        $transaction = Transaction::find($id);
+        $transaction->update($request->all());
+        return response()->json($transaction);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Transaction $transaction)
+    public function destroy($id)
     {
-        //
+        $transaction = Transaction::find($id);
+        $transaction->delete();
+        return response()->json(['message' => 'Transaction deleted successfully']);
     }
 }

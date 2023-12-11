@@ -1,7 +1,12 @@
 <?php
 
+use App\Models\Inventory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\ItemController;
+use App\Http\Controllers\TransactionController;
+use App\Models\Transaction;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +22,15 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::middleware('api')->group(function () {
+    Route::resource('inventories', InventoryController::class);
+ });
+
+ Route::middleware('api')->group(function () {
+    Route::resource('items', ItemController::class);
+ });
+
+ Route::middleware('api')->group(function () {
+    Route::resource('transactions', TransactionController::class);
+ });

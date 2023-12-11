@@ -12,7 +12,8 @@ class InventoryController extends Controller
      */
     public function index()
     {
-        //
+        $inventories = Inventory::all()->toArray();
+        return array_reverse($inventories);
     }
 
     /**
@@ -20,30 +21,41 @@ class InventoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $inventory = new Inventory([
+            'userId' => $request->input('userId')
+        ]);
+        $inventory->save();
+        return response()->json("Inventory created!");
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Inventory $inventory)
+    public function show($id)
     {
-        //
+        $inventory = Inventory::find($id);
+        return response()->json($inventory);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Inventory $inventory)
+    public function update($id, Request $request)
     {
-        //
+        $inventory = Inventory::find($id);
+        $inventory->update($request->all());
+
+        return response()->json($inventory);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Inventory $inventory)
+    public function destroy($id)
     {
-        //
+        $inventory = Inventory::find($id);
+        $inventory->delete();
+
+        return response()->json(['message' => 'Inventory deleted successfully']);
     }
 }

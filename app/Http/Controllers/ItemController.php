@@ -12,7 +12,8 @@ class ItemController extends Controller
      */
     public function index()
     {
-        //
+        $items = Item::all()->toArray();
+        return array_reverse($items);
     }
 
     /**
@@ -20,30 +21,44 @@ class ItemController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $item = new Item([
+            'nameEn' => $request->input('nameEn'),
+            'namePt' => $request->input('namePt'),
+            'type' => $request->input('type'),
+            'category' => $request->input('category'),
+            'image' => $request->input('image')
+        ]);
+        $item->save();
+
+        return response()->json('Item created!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Item $item)
+    public function show($id)
     {
-        //
+        $item = Item::find($id);
+        return response()->json($item);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Item $item)
+    public function update(Request $request, $id)
     {
-        //
+        $item = Item::find($id);
+        $item->update($request->all());
+        return response()->json($item);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Item $item)
+    public function destroy($id)
     {
-        //
+        $item = Item::find($id);
+        $item->delete();
+        return response()->json(['message' => 'Item deleted successfully']);
     }
 }
