@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\TypeController;
 use App\Models\Transaction;
 
 /*
@@ -34,3 +36,11 @@ Route::middleware('api')->group(function () {
  Route::middleware('api')->group(function () {
     Route::resource('transactions', TransactionController::class);
  });
+
+ Route::middleware('api')->group(function () {
+   Route::resource('types', TypeController::class);
+});
+
+Route::middleware('api')->group(function () {
+   Route::resource('categories', CategoryController::class);
+});

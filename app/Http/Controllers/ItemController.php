@@ -24,8 +24,8 @@ class ItemController extends Controller
         $item = new Item([
             'nameEn' => $request->input('nameEn'),
             'namePt' => $request->input('namePt'),
-            'type' => $request->input('type'),
-            'category' => $request->input('category'),
+            'typeId' => $request->input('typeId'),
+            'categoryId' => $request->input('categoryId'),
             'image' => $request->input('image')
         ]);
         $item->save();

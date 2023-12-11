@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string("nameEn")->nullable();
             $table->string("namePt")->nullable();
-            $table->string("type")->nullable();
-            $table->string("category")->nullable();
+            $table->unsignedBigInteger("typeId")->nullable();
+            $table->unsignedBigInteger("categoryId")->nullable();
+            $table->foreign('typeId')->references('id')->on('types')->onDelete('restrict');
+            $table->foreign('categoryId')->references('id')->on('categories')->onDelete('restrict');
             $table->string("image")->nullable();
             $table->timestamps();
         });
