@@ -4,10 +4,11 @@
             <div class="collapse navbar-collapse">
                 <div class="navbar-nav">
 
-                    <router-link to="/" class="nav-item nav-link">Home</router-link>
+                    <router-link to="/" class="btn btn-secondary">Home</router-link>
 
-                        <router-link to="/items" class="nav-item nav-
-    link">Items</router-link>
+                    <router-link to="/items" class="btn btn-primary">Items</router-link>
+                    <router-link to="/categories" class="btn btn-primary">Categories</router-link>
+                    <router-link to="/types" class="btn btn-primary">Types</router-link>
 
                 </div>
             </div>
