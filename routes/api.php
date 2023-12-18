@@ -7,8 +7,11 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\TypeController;
 use App\Models\Transaction;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +25,9 @@ use App\Models\Transaction;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+
+
+   
     return $request->user();
 });
 
@@ -43,4 +49,19 @@ Route::middleware('api')->group(function () {
 
 Route::middleware('api')->group(function () {
    Route::resource('categories', CategoryController::class);
+});
+
+Route::middleware('api')->group(function () {
+   Route::resource('users', UserController::class);
+});
+
+
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/register', [RegisterController::class, 'register']);
+Route::middleware('auth:sanctum')->post('/logout', [LoginController::class,'logout']);
+
+
+
+Route::middleware(['role:user'])->group(function () {
+   // Your editor routes here
 });

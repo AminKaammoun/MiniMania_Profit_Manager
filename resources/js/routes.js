@@ -11,6 +11,8 @@ import ViewType from './components/types/viewType.vue';
 import AddType from './components/types/addType.vue';
 import EditType from './components/types/editType.vue';
 
+import Login from './components/authentification/login.vue'
+import Register from './components/authentification/register.vue'
 
 export const routes = [
     {
@@ -21,36 +23,39 @@ export const routes = [
     {
         name: 'viewItem',
         path: '/items',
-        component: ViewItem
+        component: ViewItem,
+       
     },
 
     {
-        name:"Additem",
-        path:"/additem",
-        component:Additem
+        name: "Additem",
+        path: "/additem",
+        component: Additem,
+      
     },
-    
+
     {
-        name:"EditItem",
-        path:"/edititem/:id",
-        component:EditItem
+        name: "EditItem",
+        path: "/edititem/:id",
+        component: EditItem,
+    
     },
     {
         name: 'viewCategory',
         path: '/categories',
-        component: ViewCategory
+        component: ViewCategory,
     },
 
     {
-        name:"AddCategory",
-        path:"/addcategory",
-        component:AddCategory
+        name: "AddCategory",
+        path: "/addcategory",
+        component: AddCategory
     },
-    
+
     {
-        name:"EditCategory",
-        path:"/editcategory/:id",
-        component:EditCategory
+        name: "EditCategory",
+        path: "/editcategory/:id",
+        component: EditCategory
     },
     {
         name: 'viewType',
@@ -59,15 +64,26 @@ export const routes = [
     },
 
     {
-        name:"AddType",
-        path:"/addtype",
-        component:AddType
+        name: "AddType",
+        path: "/addtype",
+        component: AddType
     },
-    
+
     {
-        name:"EditType",
-        path:"/edittype/:id",
-        component:EditType
+        name: "EditType",
+        path: "/edittype/:id",
+        component: EditType
+    },
+    {
+        name: "login",
+        path: "/login",
+        component: Login,
+     
+    },
+    {
+        name: "register",
+        path: "/register",
+        component: Register,
     }
-   
+
 ];

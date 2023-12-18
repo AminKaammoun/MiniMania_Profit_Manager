@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="isUserAdmin()">
       <nav class="navbar navbar-expand-lg navbar-dark bg-success">
         <div class="container-fluid">
           <router-link :to="{ name: 'Additem' }" class="btn btn-outline-light">
@@ -24,11 +24,11 @@
               <td class="align-middle">
                 <img src="../../../img/Shadow.png" width="80" height="80" />
               </td>
-              <td class="align-middle text-center">{{ item.nameEn }}</td>
-              <td class="align-middle text-center">{{ item.namePt }}</td>
-              <td class="align-middle text-center">{{ getTypeById(item.typeId) }}</td>
-              <td class="align-middle text-center">{{ getCategoryById(item.categoryId) }}</td>
-              <td class="align-middle text-center">
+              <td class="align-middle">{{ item.nameEn }}</td>
+              <td class="align-middle">{{ item.namePt }}</td>
+              <td class="align-middle ">{{ getTypeById(item.typeId) }}</td>
+              <td class="align-middle ">{{ getCategoryById(item.categoryId) }}</td>
+              <td class="align-middle ">
                 <div class="btn-group" role="group">
                   <router-link :to="{ name: 'EditItem', params: { id: item.id } }" class="btn btn-success">
                     Edit
@@ -45,6 +45,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import CryptoJS from 'crypto-js';
 const items = ref([])
 const types = ref([])
 const categories = ref([])
@@ -57,6 +58,11 @@ const getitems = async () => {
         .catch(error => {
             console.log(error)
         })
+}
+const userRole = localStorage.getItem('role');
+
+const isUserAdmin = () =>{
+  return localStorage.getItem('role') === CryptoJS.SHA256(0).toString();
 }
 
 const gettypes = async () => {
@@ -92,6 +98,7 @@ const getcategories = async () => {
 }
 
 onMounted(() => {
+ 
     getitems();
     gettypes();
     getTypeById();
