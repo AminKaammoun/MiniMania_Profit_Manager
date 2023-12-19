@@ -20,6 +20,7 @@ import DetailsInventory from './components/inventories/detailsInventory.vue';
 import ViewTransaction from './components/transactions/viewTransaction.vue';
 import EditTransaction from './components/transactions/editTransaction.vue';
 import AddTransaction from './components/transactions/addTransaction.vue';
+import DetailTransaction from './components/transactions/detailTransaction.vue';
 
 import Login from './components/authentification/login.vue'
 import Register from './components/authentification/register.vue'
@@ -130,5 +131,10 @@ export const routes = [
         name: "ViewTransaction",
         path: "/transactions",
         component: ViewTransaction
+    },
+    {
+        name: "DetailTransaction",
+        path: "/detailtransaction/:id",
+        component: DetailTransaction
     },
 ];

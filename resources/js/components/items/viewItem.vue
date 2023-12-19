@@ -9,7 +9,7 @@
       </nav>
       <div class="py-6">
         <table class="table table-striped shadow">
-          <thead>
+          <thead class="text-center">
             <tr>
               <td>Image</td>
               <td>Name English</td>
@@ -21,14 +21,14 @@
           </thead>
           <tbody>
             <tr v-for="item in items" :key="item.id">
-              <td class="align-middle">
+              <td class="align-middle text-center">
                 <img src="../../../img/Shadow.png" width="80" height="80" />
               </td>
-              <td class="align-middle">{{ item.nameEn }}</td>
-              <td class="align-middle">{{ item.namePt }}</td>
-              <td class="align-middle ">{{ getTypeById(item.typeId) }}</td>
-              <td class="align-middle ">{{ getCategoryById(item.categoryId) }}</td>
-              <td class="align-middle ">
+              <td class="align-middle text-center">{{ item.nameEn }}</td>
+              <td class="align-middle text-center">{{ item.namePt }}</td>
+              <td class="align-middle text-center">{{ getTypeById(item.typeId) }}</td>
+              <td class="align-middle text-center">{{ getCategoryById(item.categoryId) }}</td>
+              <td class="align-middle text-center">
                 <div class="btn-group" role="group">
                   <router-link :to="{ name: 'EditItem', params: { id: item.id } }" class="btn btn-success">
                     Edit

@@ -24,17 +24,21 @@
                 <tbody>
                     <tr v-for="transaction in transactions" :key="transaction.id">
                         <td class="align-middle text-center">{{ getUserById(transaction.userId) }}</td>
-                        <td class="align-middle">
+                        <td class="align-middle text-center">
                             <img src="../../../img/Shadow.png" width="80" height="80" />
                         </td>
-                        <td class="align-middle">{{ getItemEnById(transaction.itemId) }}</td>
-                        <td class="align-middle">{{ getItemPtById(transaction.itemId)  }}</td>
-                        <td class="align-middle">{{ transaction.boughtPrice }}</td>
-                        <td class="align-middle">{{ transaction.SoldPrice }}</td>
-                        <td v-if="transaction.profit>=0" class="align-middle" style="color: green;">{{ transaction.profit }}</td>
-                        <td v-if="transaction.profit<0" class="align-middle" style="color: red;">{{ transaction.profit }}</td>
+                        <td class="align-middle text-center">{{ getItemEnById(transaction.itemId) }}</td>
+                        <td class="align-middle text-center">{{ getItemPtById(transaction.itemId)  }}</td>
+                        <td class="align-middle text-center">{{ transaction.boughtPrice }}</td>
+                        <td class="align-middle text-center">{{ transaction.SoldPrice }}</td>
+                        <td v-if="transaction.profit>=0" class="align-middle text-center" style="color: green;">{{ transaction.profit }}</td>
+                        <td v-if="transaction.profit<0" class="align-middle text-center" style="color: red;">{{ transaction.profit }}</td>
                         <td class="align-middle text-center">
                             <div class="btn-group" role="group">
+                                <router-link :to="{ name: 'DetailTransaction', params: { id: transaction.id } }"
+                                    class="btn btn-warning mx-2">
+                                    View
+                                </router-link>
                                 <router-link :to="{ name: 'EditTransaction', params: { id: transaction.id } }"
                                     class="btn btn-info">
                                     Edit

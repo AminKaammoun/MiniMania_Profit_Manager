@@ -56,6 +56,11 @@ class TransactionController extends Controller
     {
         $transaction = Transaction::find($id);
         $transaction->update($request->all());
+        if (!is_null($transaction->SoldPrice)) {
+         
+            $profit = $transaction->SoldPrice - $transaction->boughtPrice;
+            $transaction->update(['profit' => $profit]);
+        }
         return response()->json($transaction);
     }
 
