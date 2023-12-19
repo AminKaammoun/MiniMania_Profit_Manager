@@ -64,6 +64,7 @@ const logout = async () => {
 };
 
 onMounted(() => {
+   
     checkAuthStatus();
 });
 </script>

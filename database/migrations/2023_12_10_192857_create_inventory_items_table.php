@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inventory_item', function (Blueprint $table) {
+        Schema::create('inventory_items', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('inventoryId');
             $table->unsignedBigInteger("itemId");
-            $table->primary(['inventoryId', 'itemId']);
+           
             $table->foreign('inventoryId')->references('id')->on("inventories");
             $table->foreign("itemId")->references("id")->on("items");
             $table->timestamps();
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inventory_item');
+        Schema::dropIfExists('inventory_items');
     }
 };

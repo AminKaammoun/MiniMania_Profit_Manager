@@ -22,7 +22,7 @@
           <tbody>
             <tr v-for="item in items" :key="item.id">
               <td class="align-middle text-center">
-                <img src="../../../img/Shadow.png" width="80" height="80" />
+                <img :src="item.image" width="80" height="80" />
               </td>
               <td class="align-middle text-center">{{ item.nameEn }}</td>
               <td class="align-middle text-center">{{ item.namePt }}</td>

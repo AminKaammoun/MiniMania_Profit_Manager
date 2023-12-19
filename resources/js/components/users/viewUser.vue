@@ -7,7 +7,7 @@
             <tr>
               <th>Name</th>
               <th>Email</th>
-            
+              <th>worth</th>
               <th>Role</th>
               <th>Status</th>
               <th>Action</th>
@@ -18,7 +18,7 @@
             <tr v-for="user in users" :key="user.id">
               <td class="align-middle text-center">{{ user.name }}</td>
               <td class="align-middle text-center">{{ user.email }}</td>
-       
+              <td class="align-middle text-center">{{ user.inventoryWorth + user.balance }}</td>
               <td class="align-middle text-center">{{ getRoleById(user.role_id)}}</td>
               <td class="align-middle text-center" style="color: green;">ACTIVE</td>
               <td class="align-middle text-center">

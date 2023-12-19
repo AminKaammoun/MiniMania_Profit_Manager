@@ -10,10 +10,12 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TypeController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\InventoryItemController;
 
 use App\Models\Transaction;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Models\ItemInventor;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,6 +65,10 @@ Route::middleware('api')->group(function () {
 
 Route::middleware('api')->group(function () {
    Route::resource('transactions', TransactionController::class);
+});
+
+Route::middleware('api')->group(function () {
+   Route::resource('inventoryitems', InventoryItemController::class);
 });
 
 

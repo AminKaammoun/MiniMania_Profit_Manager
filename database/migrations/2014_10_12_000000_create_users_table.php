@@ -15,6 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->integer('balance')->default(0);
+            $table->integer('totalSpent')->default(0);
+            $table->integer('totalSold')->default(0);
+            $table->integer('totalProfit')->default(0);
+            $table->integer('inventoryWorth')->default(0);
+           
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

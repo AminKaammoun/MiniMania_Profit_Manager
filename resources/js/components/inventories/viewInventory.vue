@@ -6,18 +6,20 @@
           <thead class="text-center">
             <tr>
               <th>Owner</th>
+              <th>Value</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="inventory in inventories" :key="inventory.id">
-              <td class="align-middle text-center">{{ getUserById(inventory.userId) }}</td>
+              <td class="align-middle text-center">{{ getUserById(inventory.userId).name }}</td>
+              <td class="align-middle text-center">{{getUserById(inventory.userId).inventoryWorth }} </td>
               <td class="align-middle text-center">
                 <div class="btn-group" role="group">
                   <router-link :to="{ name: 'DetailsInventory', params: { id: inventory.id } }" class="btn btn-info">
                     View
                   </router-link>
-                  <button class="btn btn-danger mx-2" @click="deleteinventory(inventory.id)">Delete</button>
+                  <!--<button class="btn btn-danger mx-2" @click="deleteinventory(inventory.id)">Delete</button>-->
                 </div>
               </td>
             </tr>
@@ -57,9 +59,9 @@
 }
 
 const getUserById = (userId) => {
-    const user = users.value.find((t) => t.id === userId);
-    return user ? user.name : "";
+    return users.value.find((t) => t.id === userId);
 };
+
 
   onMounted(() => {
     getusers();

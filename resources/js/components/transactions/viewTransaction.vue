@@ -25,10 +25,10 @@
                     <tr v-for="transaction in transactions" :key="transaction.id">
                         <td class="align-middle text-center">{{ getUserById(transaction.userId) }}</td>
                         <td class="align-middle text-center">
-                            <img src="../../../img/Shadow.png" width="80" height="80" />
+                            <img :src="getItemById(transaction.itemId).image" width="80" height="80" />
                         </td>
-                        <td class="align-middle text-center">{{ getItemEnById(transaction.itemId) }}</td>
-                        <td class="align-middle text-center">{{ getItemPtById(transaction.itemId)  }}</td>
+                        <td class="align-middle text-center">{{ getItemById(transaction.itemId).nameEn }}</td>
+                        <td class="align-middle text-center">{{ getItemById(transaction.itemId).namePt  }}</td>
                         <td class="align-middle text-center">{{ transaction.boughtPrice }}</td>
                         <td class="align-middle text-center">{{ transaction.SoldPrice }}</td>
                         <td v-if="transaction.profit>=0" class="align-middle text-center" style="color: green;">{{ transaction.profit }}</td>
@@ -84,15 +84,12 @@ const getusers = async () => {
         })
 }
 
-const getItemEnById = (itemId) => {
-    const item = items.value.find((t) => t.id === itemId);
-    return item ? item.nameEn : "";
+
+
+const getItemById = (itemId) => {
+    return items.value.find((t) => t.id === itemId) || {};
 };
 
-const getItemPtById = (itemId) => {
-    const item = items.value.find((t) => t.id === itemId);
-    return item ? item.namePt : "";
-};
 
 const getitems = async () => {
     await axios.get("http://localhost:8000/api/items")
