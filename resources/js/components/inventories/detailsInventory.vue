@@ -16,7 +16,7 @@
           <tbody>
             <tr v-for="invitem in invitems" :key="invitem.id">
               <td class="align-middle text-center">
-                <img :src="getItemById(invitem.itemId).image" width="80" height="80" />
+                <img :src="getItemById(invitem.itemId).image" style="width: 90px; height: 80px;" />
               </td>
               <td class="align-middle text-center">{{ getItemById(invitem.itemId).nameEn }}</td>
               <td class="align-middle text-center">{{ getItemById(invitem.itemId).namePt }}</td>

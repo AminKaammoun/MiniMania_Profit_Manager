@@ -25,7 +25,7 @@
                     <tr v-for="transaction in transactions" :key="transaction.id">
                         <td class="align-middle text-center">{{ getUserById(transaction.userId) }}</td>
                         <td class="align-middle text-center">
-                            <img :src="getItemById(transaction.itemId).image" width="80" height="80" />
+                            <img :src="getItemById(transaction.itemId).image" style="width: 90px; height: 80px;"/>
                         </td>
                         <td class="align-middle text-center">{{ getItemById(transaction.itemId).nameEn }}</td>
                         <td class="align-middle text-center">{{ getItemById(transaction.itemId).namePt  }}</td>
