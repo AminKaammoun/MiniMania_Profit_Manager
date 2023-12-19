@@ -11,6 +11,12 @@ import ViewType from './components/types/viewType.vue';
 import AddType from './components/types/addType.vue';
 import EditType from './components/types/editType.vue';
 
+import ViewUser from './components/users/viewUser.vue';
+import EditUser from './components/users/editUser.vue';
+
+import ViewInventory from './components/inventories/viewInventory.vue';
+import DetailsInventory from './components/inventories/detailsInventory.vue';
+
 import Login from './components/authentification/login.vue'
 import Register from './components/authentification/register.vue'
 
@@ -84,6 +90,26 @@ export const routes = [
         name: "register",
         path: "/register",
         component: Register,
-    }
+    },
+    {
+        name: 'viewUser',
+        path: '/users',
+        component: ViewUser,
+    },
 
+    {
+        name: "EditUser",
+        path: "/edituser/:id",
+        component: EditUser
+    },
+    {
+        name: "ViewInventory",
+        path: "/inventories",
+        component: ViewInventory
+    },
+    {
+        name: "DetailsInventory",
+        path: "/detailsinventory/:id",
+        component: DetailsInventory
+    },
 ];

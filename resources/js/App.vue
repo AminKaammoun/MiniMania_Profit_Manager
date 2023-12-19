@@ -4,9 +4,11 @@
             <div class="collapse navbar-collapse">
                 <router-link to="/" class="btn btn-secondary">Home</router-link>
                 <div v-if="isLoggedIn && isUserAdmin" class="navbar-nav">
+                    <router-link to="/users" class="btn btn-primary">Users</router-link>
                     <router-link to="/items" class="btn btn-primary">Items</router-link>
                     <router-link to="/categories" class="btn btn-primary">Categories</router-link>
                     <router-link to="/types" class="btn btn-primary">Types</router-link>
+                    <router-link to="/inventories" class="btn btn-primary">Inventories</router-link>
                 </div>
             </div>
 

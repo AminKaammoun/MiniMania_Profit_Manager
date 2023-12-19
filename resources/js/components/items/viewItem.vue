@@ -59,7 +59,6 @@ const getitems = async () => {
             console.log(error)
         })
 }
-const userRole = localStorage.getItem('role');
 
 const isUserAdmin = () =>{
   return localStorage.getItem('role') === CryptoJS.SHA256(0).toString();

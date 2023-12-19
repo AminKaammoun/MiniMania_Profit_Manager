@@ -9,6 +9,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TypeController;
+use App\Http\Controllers\RoleController;
 use App\Models\Transaction;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -54,6 +55,12 @@ Route::middleware('api')->group(function () {
 Route::middleware('api')->group(function () {
    Route::resource('users', UserController::class);
 });
+
+Route::middleware('api')->group(function () {
+   Route::resource('roles', RoleController::class);
+});
+
+
 
 
 Route::post('/login', [LoginController::class, 'login']);
