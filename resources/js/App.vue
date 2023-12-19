@@ -9,6 +9,7 @@
                     <router-link to="/categories" class="btn btn-primary">Categories</router-link>
                     <router-link to="/types" class="btn btn-primary">Types</router-link>
                     <router-link to="/inventories" class="btn btn-primary">Inventories</router-link>
+                    <router-link to="/transactions" class="btn btn-primary">Transactions</router-link>
                 </div>
             </div>
 

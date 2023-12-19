@@ -17,6 +17,10 @@ import EditUser from './components/users/editUser.vue';
 import ViewInventory from './components/inventories/viewInventory.vue';
 import DetailsInventory from './components/inventories/detailsInventory.vue';
 
+import ViewTransaction from './components/transactions/viewTransaction.vue';
+import EditTransaction from './components/transactions/editTransaction.vue';
+import AddTransaction from './components/transactions/addTransaction.vue';
+
 import Login from './components/authentification/login.vue'
 import Register from './components/authentification/register.vue'
 
@@ -111,5 +115,20 @@ export const routes = [
         name: "DetailsInventory",
         path: "/detailsinventory/:id",
         component: DetailsInventory
+    },
+    {
+        name: "AddTransaction",
+        path: "/addTransaction",
+        component: AddTransaction
+    },
+    {
+        name: "EditTransaction",
+        path: "/edittransaction/:id",
+        component: EditTransaction
+    },
+    {
+        name: "ViewTransaction",
+        path: "/transactions",
+        component: ViewTransaction
     },
 ];

@@ -26,11 +26,15 @@ class TransactionController extends Controller
             'userId' => $request->input('userId'),
     
             'boughtPrice' => $request->input('boughtPrice'),
-            'soldPrice' => $request->input('soldPrice'),
-            'boughtDate' => $request->input('boughtDate'),
-            'soldDate' => $request->input('soldDate'),
-            'profit' => $request->input('profit')
+            'SoldPrice' => $request->input('SoldPrice'),
+            //'boughtDate' => $request->input('boughtDate'),
+            //'soldDate' => $request->input('soldDate'), 
+            //'profit' => $request->input('profit')
         ]);
+        if($request->has('SoldPrice') && $request->input('SoldPrice') !== null){
+            $transaction['profit'] = $transaction['SoldPrice'] - $transaction['boughtPrice'];
+        }
+
         $transaction->save();
 
         return response()->json('Transaction created!');

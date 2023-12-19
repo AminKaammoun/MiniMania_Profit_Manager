@@ -19,9 +19,9 @@ return new class extends Migration
             $table->foreign('userId')->references('id')->on('users')->onDelete('restrict');
             $table->integer("boughtPrice");
             $table->integer("SoldPrice")->nullable();
-            $table->date("boughtDate");
+            $table->date("boughtDate")->nullable();
             $table->date("soldDate")->nullable();
-            $table->integer("profit");
+            $table->integer("profit")->nullable();
             $table->timestamps();
         });
     }
