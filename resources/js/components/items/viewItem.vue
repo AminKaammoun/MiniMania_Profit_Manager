@@ -1,116 +1,197 @@
 <template>
-    <div v-if="isUserAdmin()">
-      <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-        <div class="container-fluid">
-          <router-link :to="{ name: 'Additem' }" class="btn btn-outline-light">
-            New Item
-          </router-link>
-        </div>
-      </nav>
-      <div class="py-6">
-        <table class="table table-striped shadow">
-          <thead class="text-center">
-            <tr>
-              <td>Image</td>
-              <td>Name English</td>
-              <td>Name Portuguese</td>
-              <td>Type</td>
-              <td>Category</td>
-              <td>Action</td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="item in items" :key="item.id">
-              <td class="align-middle text-center">
-                <img :src="item.image" style="width: 90px; height: 80px;" />
-              </td>
-              <td class="align-middle text-center">{{ item.nameEn }}</td>
-              <td class="align-middle text-center">{{ item.namePt }}</td>
-              <td class="align-middle text-center">{{ getTypeById(item.typeId) }}</td>
-              <td class="align-middle text-center">{{ getCategoryById(item.categoryId) }}</td>
-              <td class="align-middle text-center">
-                <div class="btn-group" role="group">
-                  <router-link :to="{ name: 'EditItem', params: { id: item.id } }" class="btn btn-success">
-                    Edit
-                  </router-link>
-                  <button class="btn btn-danger mx-2" @click="deleteitem(item.id)">Delete</button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+  <div v-if="isUserAdmin()">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+      <div class="container-fluid">
+        <router-link :to="{ name: 'Additem' }" class="btn btn-outline-light">
+          + New Item
+        </router-link>
       </div>
+    </nav>
+
+    <div class="py-6 shadow">
+      <Toolbar class="mb-4">
+        <template #start>
+          <Button label="Delete" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected"
+            :disabled="!selectedProducts || !selectedProducts.length" />
+        </template>
+        <template #end>
+          <InputText v-model="globalFilter" placeholder="Search..." />
+        </template>
+      </Toolbar>
+
+      <DataTable :value="filteredItems" :selection.sync="selectedProducts" @selectionChange="onSelectionChange" dataKey="id" 
+      :paginator="true" :rows="10" :stripedRows="true" :showGridlines="true" :globalFilter="globalFilter"
+        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+        responsiveLayout="scroll">
+
+        <template #header>
+          <div class="table-header flex flex-column md:flex-row md:justify-content-between">
+            <h5 class="mb-2 md:m-0 md:align-self-center">Manage Items</h5>
+
+          </div>
+        </template>
+
+        <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
+
+        <Column field="image" header="Image" class="align-middle">
+          <template #body="{ data }">
+            <img :src="data.image" style="width: 90px; height: 80px;" />
+          </template>
+        </Column>
+        <Column field="nameEn" header="Name English" class="align-middle" sortable></Column>
+        <Column field="namePt" header="Name Portuguese" class="align-middle" sortable></Column>
+
+        <Column field="typeId" header="Type" class="align-middle" sortable>
+          <template #body="{ data }">
+            {{ getTypeById(data.typeId) }}
+          </template>
+        </Column>
+
+        <Column field="categoryId" header="Category" class="align-middle" sortable>
+          <template #body="{ data }">
+            {{ getCategoryById(data.categoryId) }}
+          </template>
+        </Column>
+
+        <Column header="Action" class="align-middle">
+          <template #body="{ data }">
+            <div class="btn-group" role="group">
+             <!-- <router-link :to="{ name: 'EditItem', params: { id: data.id } }" class="btn btn-outline-success mx-2">
+                <i class="fa-solid fa-pen-to-square"></i>
+                Edit
+              </router-link>-->
+              <EditItem :art="data"/>
+              <button class="btn btn-outline-danger mx-2" @click="deleteitem(data.id)">
+                <i class="fa-solid fa-trash"></i> Delete
+              </button>
+            </div>
+          </template>
+        </Column>
+      </DataTable>
     </div>
-  </template>
+  </div>
+</template>
+
 <script setup>
-import { ref, onMounted } from 'vue';
+import api from '../config/api.js';
+import { ref, onMounted, computed } from 'vue';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import InputText from 'primevue/inputtext';
+import Toolbar from 'primevue/toolbar';
+import Button from 'primevue/button';
+import EditItem from './editItem.vue';
+
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
-const items = ref([])
-const types = ref([])
-const categories = ref([])
-const getitems = async () => {
-    await axios.get("http://localhost:8000/api/items")
-        .then(res => {
-            items.value = res.data
-            console.log(items.value)
-        })
-        .catch(error => {
-            console.log(error)
-        })
-}
 
-const isUserAdmin = () =>{
+const items = ref([]);
+const types = ref([]);
+const categories = ref([]);
+const globalFilter = ref('');
+
+const selectedProducts = ref([]);
+
+const onSelectionChange = (e) => {
+  console.log('Selection changed:', e.value);
+  selectedProducts.value = e.value;
+  console.log('Selected Products:', selectedProducts.value);
+};
+
+const getitems = async () => {
+  try {
+    const response = await axios.get("http://localhost:8000/api/items?_embed=types,categories");
+    items.value = response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const isUserAdmin = () => {
   return localStorage.getItem('role') === CryptoJS.SHA256(0).toString();
-}
+};
 
 const gettypes = async () => {
-    await axios.get("http://localhost:8000/api/types")
-        .then(res => {
-            types.value = res.data
-            console.log(types.value)
-        })
-        .catch(error => {
-            console.log(error)
-        })
-}
+  try {
+    const response = await axios.get("http://localhost:8000/api/types");
+    types.value = response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const getTypeById = (typeId) => {
-    const type = types.value.find((t) => t.id === typeId);
-    return type ? type.name : "";
+  const type = types.value.find((t) => t.id === typeId);
+  return type ? type.name : "";
 };
 
 const getCategoryById = (categoryId) => {
-    const category = categories.value.find((t) => t.id === categoryId);
-    return category ? category.name : "";
+  const category = categories.value.find((t) => t.id === categoryId);
+  return category ? category.name : "";
 };
 
-
 const getcategories = async () => {
-    await axios.get("http://localhost:8000/api/categories")
-        .then(res => {
-            categories.value = res.data
-            console.log(categories.value)
-        })
-        .catch(error => {
-            console.log(error)
-        })
-}
+  try {
+    const response = await axios.get("http://localhost:8000/api/categories");
+    categories.value = response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 onMounted(() => {
- 
-    getitems();
-    gettypes();
-    getTypeById();
-    getcategories();
+  getitems();
+  gettypes();
+  getTypeById();
+  getcategories();
 });
-const deleteitem = async (id) => {
-    try {
-        await axios.delete(`http://localhost:8000/api/items/${id}`)
 
-        getitems()
-    } catch (error) {
-        console.log(error)
-    }
-}
+const deleteitem = async (id) => {
+  if(window.confirm("Are you sure to delete this item?")){
+  try {
+    await axios.delete(`http://localhost:8000/api/items/${id}`);
+    getitems();
+  } catch (error) {
+    console.log(error);
+  }}
+};
+
+const confirmDeleteSelected = () => {
+  // Your implementation for confirming and deleting selected items
+  if (selectedProducts.value && selectedProducts.value.length > 0) {
+    // Implement your logic to confirm and delete selected items
+    console.log('Confirm and delete selected items:', selectedProducts.value);
+  } else {
+    console.log('No items selected for deletion.');
+  }
+};
+// Filter the items based on the global filter input
+const filteredItems = computed(() => {
+  const regex = new RegExp(globalFilter.value, 'i');
+  return items.value.filter((item) => {
+    return (
+      regex.test(item.nameEn) ||
+      regex.test(item.namePt) ||
+      regex.test(getTypeById(item.typeId)) ||
+      regex.test(getCategoryById(item.categoryId))
+    );
+  });
+});
 </script>
-<style lang="scss" scoped></style>
+
+<style lang="scss" scoped>
+@import '@fortawesome/fontawesome-free/css/all.css';
+.table-header {
+  padding: 1rem;
+  /* Adjust padding as needed */
+}
+
+.p-input-icon-left {
+  display: flex;
+  align-items: center;
+}
+
+.p-inputtext {
+  width: 100%;
+}
+</style>

@@ -3,6 +3,8 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import App from './App.vue';
 import { routes } from "./routes";
+import PrimeVue from 'primevue/config';
+import 'primevue/resources/themes/lara-light-green/theme.css'
 
 let app = createApp(App);
 
@@ -26,6 +28,6 @@ router.beforeEach(async (to, from, next) => {
     }
 });
 
-
+app.use(router).use(PrimeVue);
 app.use(router);
 app.mount("#app");
