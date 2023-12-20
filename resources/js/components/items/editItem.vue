@@ -1,14 +1,14 @@
 <template>
-    <div>
-      
-      <button type="button" class="btn btn-outline-success" @click="visible = true">
-        <span>
-          <i class="fa-solid fa-pen-to-square"></i>
-          Edit
-        </span>
-      </button>
-      <form>
-        <Dialog v-model:visible="visible">
+  <div>
+
+    <button type="button" class="btn btn-outline-success" @click="visible = true">
+      <span>
+        <i class="fa-solid fa-pen-to-square"></i>
+        Edit
+      </span>
+    </button>
+    <form>
+      <Dialog v-model:visible="visible">
         <h3 class="text-center">Edit Item</h3>
         <div class="form-group">
           <label>Name English</label>
@@ -39,12 +39,18 @@
         </div>
 
         <div class="form-group">
-          <label for="imageitem" class="form-label">Image</label>
-          <input type="text" class="form-control" id="imageitem" v-model="items.image" />
+          <div>
+            <br>
+            <file-pond name="test" ref="pond" class-name="my-pond" label-idle="Drop files here..." allow-multiple="false"
+              accepted-file-types="image/jpeg, image/png" v-bind:files="myFiles" v-on:init="handleFilePondInit"
+              :server="serverOptions()" />
+          </div>
         </div>
-<br>
-        <button type="submit" class="btn btn-outline-info mx- 2" @click="updateItem"> <i class="fa-solid fa-floppy-disk"></i> Update</button>
-        <button type="button" class="btn btn-outline-danger mx- 2" @click="cancel"> <i class="fa-solid fa-ban"></i> Cancel</button>
+
+        <button type="submit" class="btn btn-outline-info mx- 2" @click="updateItem"> <i
+            class="fa-solid fa-floppy-disk"></i> Update</button>
+        <button type="button" class="btn btn-outline-danger mx- 2" @click="cancel"> <i class="fa-solid fa-ban"></i>
+          Cancel</button>
       </Dialog>
     </form>
   </div>
@@ -56,6 +62,10 @@ import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
 import { ref, onMounted } from 'vue';
 import Dialog from 'primevue/dialog';
+import vueFilePond from 'vue-filepond';
+import 'filepond/dist/filepond.min.css';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
 
 const props = defineProps(['art'])
 const router = useRouter();
@@ -64,6 +74,54 @@ const visible = ref(false);
 const items = ref({});
 const types = ref([]);
 const categories = ref([]);
+const FilePond = vueFilePond(FilePondPluginImagePreview);
+const myFiles = ref([]);
+
+const handleFilePondInit = async () => {
+  if (items.value.image) {
+    myFiles.value = [
+      {
+        source: items.value.image,
+        options: { type: 'local' }
+      }
+    ]
+  }
+}
+
+const serverOptions = () => {
+  console.log('server pond');
+  return {
+    load: (source, load, error, progress, abort, headers) => {
+      var myRequest = new Request(source);
+      fetch(myRequest).then(function (response) {
+        response.blob().then(function (myBlob) {
+          load(myBlob);
+        });
+      });
+    },
+
+    process: (fieldName, file, metadata, load, error, progress, abort) => {
+      const data = new FormData();
+      data.append('file', file);
+      data.append('upload_preset', 'minimania_cloudinary');
+      data.append('cloud_name', 'ddjwe8iuw');
+      data.append('public_id', file.name);
+      axios.post('https://api.cloudinary.com/v1_1/ddjwe8iuw/upload', data)
+        .then((response) => response.data)
+        .then((data) => {
+          console.log(data);
+          items.value.image = data.url;
+          load(data);
+        })
+        .catch((error) => {
+          console.error('Error uploading file:', error);
+          error('Upload failed');
+          abort();
+        });
+    },
+  };
+};
+
 
 const fetchItem = async () => {
   items.value = props.art;
@@ -92,12 +150,12 @@ const gettypes = async () => {
 };
 
 const updateItem = async () => {
-    console.log('Before API call');
+  console.log('Before API call');
   api.put(`/api/items/${items.value.id}`, items.value)
     .then(() => {
-        console.log('After API call');
+      console.log('After API call');
       visible.value = false
-      
+
     })
     .catch((err) => {
       console.error(err);
@@ -115,4 +173,5 @@ onMounted(async () => {
 });
 </script>
 <style lang="scss" scoped>
-@import '@fortawesome/fontawesome-free/css/all.css';</style>
+@import '@fortawesome/fontawesome-free/css/all.css';
+</style>

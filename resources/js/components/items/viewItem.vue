@@ -1,13 +1,8 @@
 <template>
+  <AddItem/>
+  <Toast ref="toastRef" />
   <div v-if="isUserAdmin()">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-      <div class="container-fluid">
-        <router-link :to="{ name: 'Additem' }" class="btn btn-outline-light">
-          + New Item
-        </router-link>
-      </div>
-    </nav>
-
+    
     <div class="py-6 shadow">
       <Toolbar class="mb-4">
         <template #start>
@@ -19,7 +14,7 @@
         </template>
       </Toolbar>
 
-      <DataTable :value="filteredItems" :selection.sync="selectedProducts" @selectionChange="onSelectionChange" dataKey="id" 
+      <DataTable :value="filteredItems" :loading ="isLoading" :selection.sync="selectedProducts" @selectionChange="onSelectionChange" dataKey="id" 
       :paginator="true" :rows="10" :stripedRows="true" :showGridlines="true" :globalFilter="globalFilter"
         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
         responsiveLayout="scroll">
@@ -31,7 +26,7 @@
           </div>
         </template>
 
-        <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
+        <Column selectionMode="multiple" :headerStyle="{'width': '3em'}"></Column>
 
         <Column field="image" header="Image" class="align-middle">
           <template #body="{ data }">
@@ -67,6 +62,8 @@
             </div>
           </template>
         </Column>
+
+
       </DataTable>
     </div>
   </div>
@@ -81,6 +78,8 @@ import InputText from 'primevue/inputtext';
 import Toolbar from 'primevue/toolbar';
 import Button from 'primevue/button';
 import EditItem from './editItem.vue';
+import AddItem from './addItem.vue';
+import Toast from 'primevue/toast'; // Importing Toast from PrimeVue
 
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
@@ -89,6 +88,7 @@ const items = ref([]);
 const types = ref([]);
 const categories = ref([]);
 const globalFilter = ref('');
+const toastRef = ref(null); // Declare the toast variable
 
 const selectedProducts = ref([]);
 
@@ -147,25 +147,26 @@ onMounted(() => {
 });
 
 const deleteitem = async (id) => {
-  if(window.confirm("Are you sure to delete this item?")){
-  try {
-    await axios.delete(`http://localhost:8000/api/items/${id}`);
-    getitems();
-  } catch (error) {
-    console.log(error);
-  }}
+  if (window.confirm("Are you sure to delete this item?")) {
+    try {
+      await axios.delete(`http://localhost:8000/api/items/${id}`);
+      getitems();
+      toastRef.value.add({ severity: 'success', summary: 'Successful', detail: 'Item Deleted', life: 3000 });
+    } catch (error) {
+      console.log(error);
+      toastRef.value.add({ severity: 'error', summary: 'Error', detail: 'Error deleting item', life: 3000  });
+    }
+  }
 };
 
 const confirmDeleteSelected = () => {
-  // Your implementation for confirming and deleting selected items
   if (selectedProducts.value && selectedProducts.value.length > 0) {
-    // Implement your logic to confirm and delete selected items
     console.log('Confirm and delete selected items:', selectedProducts.value);
   } else {
     console.log('No items selected for deletion.');
   }
 };
-// Filter the items based on the global filter input
+
 const filteredItems = computed(() => {
   const regex = new RegExp(globalFilter.value, 'i');
   return items.value.filter((item) => {
@@ -179,8 +180,10 @@ const filteredItems = computed(() => {
 });
 </script>
 
+
 <style lang="scss" scoped>
 @import '@fortawesome/fontawesome-free/css/all.css';
+@import 'mosha-vue-toastify/dist/style.css';
 .table-header {
   padding: 1rem;
   /* Adjust padding as needed */
