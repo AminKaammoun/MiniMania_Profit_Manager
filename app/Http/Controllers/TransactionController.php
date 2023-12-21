@@ -75,36 +75,70 @@ class TransactionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $change = false;
         $transaction = Transaction::find($id);
-        $oldBoughtPrice = 0;
-        $oldSoldPrice = 0;
-        if (!is_null($transaction->SoldPrice)) {
-            $oldBoughtPrice = $transaction->boughtPrice;
-            $oldSoldPrice = $transaction->SoldPrice;
-        }
-        $transaction->update($request->all());
-        if (!is_null($transaction->SoldPrice)) {
+        $oldBoughtPrice = $transaction->boughtPrice;
+        $oldSoldPrice = $transaction->SoldPrice;
+        $oldProfit = $transaction->profit;
 
+        // Update transaction with new values
+        $transaction->update($request->all());
+
+        $user = User::find($transaction['userId']);
+        $balanceChange = 0;
+        $inventoryChange = 0;
+
+        // Check if BoughtPrice is updated
+        if ($oldBoughtPrice !== $transaction['boughtPrice']) {
+            if (is_null($oldSoldPrice)) {
+
+                $inventoryChange += $transaction['boughtPrice'] - $oldBoughtPrice;
+            }
+
+            $balanceChange -= $transaction['boughtPrice'] - $oldBoughtPrice;
+        }
+
+        // Check if SoldPrice is updated
+        if ($oldSoldPrice !== $transaction->SoldPrice) {
+            $balanceChange += $transaction->SoldPrice - $oldSoldPrice;
+
+            // Check if there was an old SoldPrice
+            if (!is_null($oldSoldPrice)) {
+                // Change in profit is the new profit minus the old profit
+                $profitChange = $transaction->profit - $oldProfit;
+
+                $balanceChange += $profitChange; // Change in balance is the change in profit
+
+                
+            } else {
+                $inventoryChange -= $transaction['boughtPrice'];
+                $inventory = Inventory::where('userId', $transaction->userId)->first();
+                $item = Item::find($transaction->itemId);
+                $itemInventory = InventoryItem::where('inventoryId', $inventory->userId)->where('itemId', $item->id)->first();
+                if ($itemInventory) {
+                    $itemInventory->delete();
+                }
+            }
+        }
+
+
+        // Update user's balance and inventory
+        $user->balance += $balanceChange;
+        $user->inventoryWorth += $inventoryChange;
+        $user->save();
+
+        // Update profit based on the new BoughtPrice and SoldPrice
+        if (!is_null($transaction->SoldPrice)) {
             $profit = $transaction->SoldPrice - $transaction->boughtPrice;
             $transaction->update(['profit' => $profit]);
-            $inventory = Inventory::where('userId', $transaction->userId)->first();
-            $item = Item::find($transaction->itemId);
-
-            $itemInventory = InventoryItem::where('inventoryId', $inventory->userId)->where('itemId', $item->id)->first();
-            if ($itemInventory) {
-                $itemInventory->delete();
-            }
-            $user = User::find($transaction['userId']);
-            $user->inventoryWorth += $oldBoughtPrice;
-            $user->balance -= $oldSoldPrice;
-
-            $user->inventoryWorth -= $transaction['boughtPrice'];
-            $user->balance += $transaction['SoldPrice'];
-            $user->save();
         }
+
+
+
         return response()->json($transaction);
     }
+
+
+
 
     /**
      * Remove the specified resource from storage.

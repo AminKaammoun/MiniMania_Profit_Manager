@@ -72,7 +72,6 @@ import Dialog from 'primevue/dialog';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
 import Toast from 'primevue/toast';
 
-// Create FilePond component
 const FilePond = vueFilePond(FilePondPluginImagePreview);
 const myFiles = ref([]);
 const toastRef = ref(null);

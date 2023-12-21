@@ -1,72 +1,105 @@
 <template>
-    <div>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-            <div class="container-fluid">
-                <router-link :to="{ name: 'AddTransaction' }" class="btn btn-outline-light">
-                    New Transaction
-                </router-link>
-            </div>
-        </nav>
-        <div class="py-6">
-            <table class="table table-striped shadow">
-                <thead class="text-center">
-                    <tr>
-                        <th>User</th>
-                        <th>Image</th>
-                        <th>Item Name English</th>
-                        <th>Item Name Portuguese</th>
-                        <th>Bought Price</th>
-                        <th>Sold Price</th>
-                        <th>Profit</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="transaction in transactions" :key="transaction.id">
-                        <td class="align-middle text-center">{{ getUserById(transaction.userId) }}</td>
-                        <td class="align-middle text-center">
-                            <img :src="getItemById(transaction.itemId).image" style="width: 90px; height: 80px;"/>
-                        </td>
-                        <td class="align-middle text-center">{{ getItemById(transaction.itemId).nameEn }}</td>
-                        <td class="align-middle text-center">{{ getItemById(transaction.itemId).namePt  }}</td>
-                        <td class="align-middle text-center">{{ transaction.boughtPrice }}</td>
-                        <td class="align-middle text-center">{{ transaction.SoldPrice }}</td>
-                        <td v-if="transaction.profit>=0" class="align-middle text-center" style="color: green;">{{ transaction.profit }}</td>
-                        <td v-if="transaction.profit<0" class="align-middle text-center" style="color: red;">{{ transaction.profit }}</td>
-                        <td class="align-middle text-center">
-                            <div class="btn-group" role="group">
-                                <router-link :to="{ name: 'DetailTransaction', params: { id: transaction.id } }"
-                                    class="btn btn-warning mx-2">
-                                    View
-                                </router-link>
-                                <router-link :to="{ name: 'EditTransaction', params: { id: transaction.id } }"
-                                    class="btn btn-info">
-                                    Edit
-                                </router-link>
-                                <button class="btn btn-danger mx-2"
-                                    @click="deletetransaction(transaction.id)">Delete</button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</template>
   
-<script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
+          <AddTransaction/>
+        <Toast ref="toastRef" />
+        <div class="py-6 shadow">
+          
+            <Toolbar class="mb-4">
+        <template #end>
+          <InputText v-model="globalFilter" placeholder="Search..." />
+        </template>
+      </Toolbar>
+      
+            <DataTable :value="filteredTransactions" :loading="isLoading" :paginator="true" :rows="10" :stripedRows="true"
+                :showGridlines="true" :globalFilter="globalFilter"
+                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                responsiveLayout="scroll">
+                <template #header>
+                    <div class="table-header flex flex-column md:flex-row md:justify-content-between">
+                        <h5 class="mb-2 md:m-0 md:align-self-center">Manage Transactions</h5>
+                    </div>
+                </template>
 
-const transactions = ref([])
-const users = ref([])
-const items = ref([])
+                <Column field="userId" header="User" class="align-middle" sortable>
+                    <template #body="{ data }">
+                        {{ getUserById(data.userId) }}
+                    </template>
+                </Column>
+
+                <Column field="image" header="Image" class="align-middle">
+                    <template #body="{ data }">
+                        <img :src="getItemById(data.itemId).image" style="width: 70px; height: 65px;" />
+                    </template>
+                </Column>
+
+                <Column field="itemId" header="Item Name English" class="align-middle" sortable>
+                    <template #body="{ data }">
+                        {{ getItemById(data.itemId).nameEn }}
+                    </template>
+                </Column>
+
+                <Column field="itemId" header="Item Name Portuguese" class="align-middle" sortable>
+                    <template #body="{ data }">
+                        {{ getItemById(data.itemId).namePt }}
+                    </template>
+                </Column>
+
+                <Column field="boughtPrice" header="Bought Price" class="align-middle" sortable></Column>
+
+                <Column field="SoldPrice" header="Sold Price" class="align-middle" sortable></Column>
+
+                <Column field="profit" header="Profit" class="align-middle" sortable>
+                    <template #body="{ data }">
+                        <span :style="{ color: data.profit >= 0 ? 'green' : 'red' }">{{ data.profit }}</span>
+                    </template>
+                </Column>
+
+                <Column header="Action" class="align-middle">
+                    <template #body="{ data }">
+                        <div class="btn-group" role="group">
+                            <router-link :to="{ name: 'DetailTransaction', params: { id: data.id } }"
+                                class="btn btn-outline-warning mx-2">
+                                <i class="fa-solid fa-eye"></i>
+                                View
+                            </router-link>
+                           
+                            <EditTransaction :tra="data"/>
+                            <button class="btn btn-outline-danger mx-2" @click="deletetransaction(data.id)"> <i class="fa-solid fa-trash"></i> Delete</button>
+                        </div>
+                    </template>
+                </Column>
+            </DataTable>
+        </div>
+   
+</template>
+
+
+<script setup>
+import { ref, onMounted, computed } from 'vue';
+import axios from 'axios';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import Toast from 'primevue/toast';
+
+import InputText from 'primevue/inputtext';
+import Toolbar from 'primevue/toolbar';
+
+import AddTransaction from './addTransaction.vue';
+import EditTransaction from './editTransaction.vue';
+
+const transactions = ref([]);
+const users = ref([]);
+const items = ref([]);
+const globalFilter = ref('');
+const toastRef = ref(null);
+const isLoading = ref(true);
 
 
 const gettransactions = async () => {
     try {
         const response = await axios.get("http://localhost:8000/api/transactions");
         transactions.value = response.data;
+        isLoading.value = false;
         console.log(transactions.value);
     } catch (error) {
         console.log(error);
@@ -115,11 +148,30 @@ onMounted(() => {
 });
 
 const deletetransaction = async (id) => {
+    if (window.confirm("Are you sure to delete this transaction?")) {
     try {
         await axios.delete(`http://localhost:8000/api/transactions/${id}`);
         gettransactions();
+        toastRef.value.add({ severity: 'success', summary: 'Delete', detail: 'Transaction Deleted', life: 3000 });
     } catch (error) {
         console.log(error);
+        toastRef.value.add({ severity: 'error', summary: 'Error', detail: 'Error deleting transaction', life: 3000  });
     }
+}
 };
+
+const filteredTransactions = computed(() => {
+  const regex = new RegExp(globalFilter.value, 'i');
+  return transactions.value.filter((transaction) => {
+    return (
+      regex.test(getUserById(transaction.userId)) ||
+      regex.test(getItemById(transaction.itemId).nameEn) ||
+      regex.test(getItemById(transaction.itemId).namePt)
+    );
+  });
+});
+
 </script>
+<style scoped>
+@import '@fortawesome/fontawesome-free/css/all.css';
+</style>

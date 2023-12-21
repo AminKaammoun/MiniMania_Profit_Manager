@@ -1,6 +1,6 @@
 <template>
   <div>
-
+    <Toast ref="toastRef" />
     <button type="button" class="btn btn-outline-success" @click="visible = true">
       <span>
         <i class="fa-solid fa-pen-to-square"></i>
@@ -66,16 +66,16 @@ import vueFilePond from 'vue-filepond';
 import 'filepond/dist/filepond.min.css';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
+import Toast from 'primevue/toast'; 
 
 const props = defineProps(['art'])
-const router = useRouter();
-const route = useRoute();
 const visible = ref(false);
 const items = ref({});
 const types = ref([]);
 const categories = ref([]);
 const FilePond = vueFilePond(FilePondPluginImagePreview);
 const myFiles = ref([]);
+const toastRef = ref(null);
 
 const handleFilePondInit = async () => {
   if (items.value.image) {
@@ -155,10 +155,12 @@ const updateItem = async () => {
     .then(() => {
       console.log('After API call');
       visible.value = false
+      toastRef.value.add({ severity: 'info', summary: 'Updated', detail: 'Item Updated', life: 3000 });
 
     })
     .catch((err) => {
       console.error(err);
+      toastRef.value.add({ severity: 'error', summary: 'Error', detail: 'Item can not be Updated', life: 3000 });
     });
 };
 

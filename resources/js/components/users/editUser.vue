@@ -1,21 +1,24 @@
 <template>
     <div>
-        <h3 class="text-center">Edit Item</h3>
-        <div class="row">
-            <div class="col-md-6">
-                <form @submit.prevent="updateUser">
+        <Toast ref="toastRef" />
+        <button type="button" class="btn btn-outline-success" @click="visible = true">
+            <span>
+                <i class="fa-solid fa-pen-to-square"></i>
+                Edit
+            </span>
+        </button>
+        <Dialog v-model:visible="visible">
+            <div>
+                <h3 class="text-center">Edit User</h3>
+                <div class="p-fluid">
                     <div class="form-group">
-                        <label>Name</label>
-
-                        <input type="text" class="form-control" v-model="users.name">
-
+                        <label for="name">Name</label>
+                        <InputText id="name" v-model="users.name" class="p-inputtext" />
                     </div>
 
                     <div class="form-group">
-                        <label>Email</label>
-
-                        <input type="text" class="form-control" v-model="users.email">
-
+                        <label for="email">Email</label>
+                        <InputText id="email" v-model="users.email" class="p-inputtext" />
                     </div>
 
                     <div class="form-group">
@@ -26,63 +29,72 @@
                             </option>
                         </select>
                     </div>
-
-
-
-                    <button type="submit" class="btn btn-primary">Update</button>
-                </form>
+                    <br>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-outline-info mx- 2" @click="updateUser"> <i
+                                class="fa-solid fa-floppy-disk"></i> Update</button>
+                        <button type="button" class="btn btn-outline-danger mx- 2" @click="cancel"> <i
+                                class="fa-solid fa-ban"></i>
+                            Cancel</button>
+                    </div>
+                </div>
             </div>
-        </div>
+        </Dialog>
     </div>
 </template>
-    
+  
 <script setup>
 import axios from 'axios';
-import { useRouter, useRoute } from 'vue-router';
-const router = useRouter();
-const route = useRoute();
 import { ref, onMounted } from 'vue';
+import Dialog from 'primevue/dialog';
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
+import Toast from 'primevue/toast';
+
 const users = ref({});
 const roles = ref([]);
-const fetchUser = async () => {
+const visible = ref(false);
+const props = defineProps(['usr'])
+const toastRef = ref(null);
 
-    await axios
-        .get(`http://localhost:8000/api/users/${route.params.id}`)
-        .then((res) => {
-            users.value = res.data;
-        })
-        .catch((err) => { console.error(err) })
-
-}
-
-
-const getroles = async () => {
-    await axios.get("http://localhost:8000/api/roles")
-        .then(res => {
-            roles.value = res.data
-            console.log(roles.value)
-        })
-        .catch(error => {
-            console.log(error)
-        })
-}
+const fetchUser = () => {
+    users.value = props.usr;
+};
 
 
 const updateUser = async () => {
-    await axios
+    try {
+        await axios.patch(`http://localhost:8000/api/users/${users.value.id}`, users.value);
+        toastRef.value.add({ severity: 'info', summary: 'Update', detail: 'User Updated', life: 3000 });
+        visible.value = false
+    } catch (error) {
+        console.error(error);
+    }
+};
 
-        .patch(`http://localhost:8000/api/users/${route.params.id}`, users.value)
 
-        .then(() => {
-            router.push({ name: 'viewUser' });
-        })
-        .catch((err) => { console.error(err) })
-}
+const cancel = () => {
+    visible.value = false;
+};
+
+const getroles = async () => {
+    try {
+        const response = await axios.get('http://localhost:8000/api/roles');
+        roles.value = response.data;
+        console.log(roles.value);
+    } catch (error) {
+        console.log(error);
+    }
+};
 
 onMounted(async () => {
     getroles();
-
     await fetchUser();
-
 });
+
 </script>
+  
+<style scoped>
+@import '@fortawesome/fontawesome-free/css/all.css';
+</style>
+  

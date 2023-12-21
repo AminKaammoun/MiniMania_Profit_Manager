@@ -1,76 +1,91 @@
 <template>
     <div>
-        <h3 class="text-center">Edit Item</h3>
-        <div class="row">
-            <div class="col-md-6">
-                <form @submit.prevent="updateTransaction">
-                   
-                    <div class="mb-3">
-                        <label for="user" class="form-label">User</label>
-                        <select class="form-select" id="user" v-model="transactions.userId">
-                            <option v-for="userOption in users" :key="userOption.id" :value="userOption.id">
-                                {{ userOption.name }}
-                            </option>
-                        </select>
-                    </div>
+        <Toast ref="toastRef" />
+        <button type="button" class="btn btn-outline-info" @click="visible = true">
 
-                    <div class="mb-3">
-                        <label for="item" class="form-label">Item Name English</label>
-                        <select class="form-select" id="item" v-model="transactions.itemId">
-                            <option v-for="itemOption in items" :key="itemOption.id" :value="itemOption.id">
-                                {{ itemOption.nameEn }}
-                            </option>
-                        </select>
-                    </div>
+            <i class="fa-solid fa-pen-to-square"></i>Edit
 
-                    <div class="mb-3">
-                        <label for="item1" class="form-label">Item Name Portuguese</label>
-                        <select class="form-select" id="item1" v-model="transactions.itemId">
-                            <option v-for="itemOption in items" :key="itemOption.id" :value="itemOption.id">
-                                {{ itemOption.namePt }}
-                            </option>
-                        </select>
-                    </div>
+        </button>
 
-                    <div class="mb-3">
-                        <label for="nameEn" class="form-label">Bought Price</label>
-                        <input type="text" class="form-control" id="nameEn" v-model="transactions.boughtPrice">
-                    </div>
+        <form>
+            <Dialog v-model:visible="visible">
+                <h3 class="text-center">Edit Transaction</h3>
+                <div class="form-group">
+                    <label for="user" class="form-label">User</label>
+                    <select class="form-select" id="user" v-model="transactions.userId">
+                        <option v-for="userOption in users" :key="userOption.id" :value="userOption.id">
+                            {{ userOption.name }}
+                        </option>
+                    </select>
+                </div>
 
-                    <div class="mb-3">
-                        <label for="namePt" class="form-label">Sold Price</label>
-                        <input type="text" class="form-control" id="namePt" v-model="transactions.SoldPrice">
-                    </div>
+                <div class="form-group">
+                    <label for="item" class="form-label">Item Name English</label>
+                    <select class="form-select" id="item" v-model="transactions.itemId">
+                        <option v-for="itemOption in items" :key="itemOption.id" :value="itemOption.id">
+                            {{ itemOption.nameEn }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="item1" class="form-label">Item Name Portuguese</label>
+                    <select class="form-select" id="item1" v-model="transactions.itemId">
+                        <option v-for="itemOption in items" :key="itemOption.id" :value="itemOption.id">
+                            {{ itemOption.namePt }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="nameEn" class="form-label">Bought Price</label>
+                    <input type="text" class="form-control" id="nameEn" v-model="transactions.boughtPrice">
+                </div>
+
+                <div class="form-group">
+                    <label for="namePt" class="form-label">Sold Price</label>
+                    <input type="text" class="form-control" id="namePt" v-model="transactions.SoldPrice">
+                </div>
+
+                <br>
+                <button type="submit" class="btn btn-outline-primary mx- 2" @click="updateTransaction"><i
+                        class="fa-solid fa-floppy-disk"></i> Update</button>
+                <button type="button" class="btn btn-outline-danger mx- 2" @click="cancel"> <i class="fa-solid fa-ban"></i>
+                    Cancel</button>
+            </Dialog>
+        </form>
 
 
-                    <button type="submit" class="btn btn-primary">Update</button>
-                </form>
-            </div>
-        </div>
     </div>
 </template>
     
 <script setup>
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
+import Dialog from 'primevue/dialog';
+import Toast from 'primevue/toast'; 
+
 const router = useRouter();
 const route = useRoute();
 import { ref, onMounted } from 'vue';
+
+const toastRef = ref(null);
 const transactions = ref([])
 const users = ref([])
 const items = ref([])
+const visible = ref(false);
+const props = defineProps(['tra'])
+
+
+const cancel = () => {
+    visible.value = false;
+};
 
 const fetchTransaction = async () => {
 
-    await axios
-        .get(`http://localhost:8000/api/transactions/${route.params.id}`)
-        .then((res) => {
-            transactions.value = res.data;
-        })
-        .catch((err) => { console.error(err) })
+    transactions.value = props.tra;
 
 }
-
 
 const getusers = async () => {
     await axios.get("http://localhost:8000/api/users")
@@ -96,12 +111,15 @@ const getitems = async () => {
 const updateTransaction = async () => {
     await axios
 
-        .patch(`http://localhost:8000/api/transactions/${route.params.id}`, transactions.value)
+        .patch(`http://localhost:8000/api/transactions/${transactions.value.id}`, transactions.value)
 
         .then(() => {
-            router.push({ name: 'ViewTransaction' });
+            visible.value = false;
+            toastRef.value.add({ severity: 'info', summary: 'Updated', detail: 'Transaction Updated', life: 3000 });
         })
-        .catch((err) => { console.error(err) })
+        .catch((err) => { console.error(err) 
+            toastRef.value.add({ severity: 'error', summary: 'Error', detail: 'Transaction can not be deleted', life: 3000 });
+        })
 }
 
 onMounted(async () => {
@@ -111,3 +129,6 @@ onMounted(async () => {
 
 });
 </script>
+<style lang="scss" scoped>
+@import '@fortawesome/fontawesome-free/css/all.css';
+</style>
