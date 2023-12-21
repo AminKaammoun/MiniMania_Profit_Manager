@@ -57,11 +57,8 @@
                 <Column header="Action" class="align-middle">
                     <template #body="{ data }">
                         <div class="btn-group" role="group">
-                            <router-link :to="{ name: 'DetailTransaction', params: { id: data.id } }"
-                                class="btn btn-outline-warning mx-2">
-                                <i class="fa-solid fa-eye"></i>
-                                View
-                            </router-link>
+                            <button class="btn btn-outline-warning mx-2" @click="viewTransaction"> <i class="fa-solid fa-eye"></i> View</button>
+
                            
                             <EditTransaction :tra="data"/>
                             <button class="btn btn-outline-danger mx-2" @click="deletetransaction(data.id)"> <i class="fa-solid fa-trash"></i> Delete</button>
@@ -170,6 +167,10 @@ const filteredTransactions = computed(() => {
     );
   });
 });
+
+const viewTransaction = () => {
+    toastRef.value.add({ severity: 'warn', summary: 'Coming soon!', detail: 'Not available yet', life: 3000 });
+}
 
 </script>
 <style scoped>

@@ -25,6 +25,9 @@ import DetailTransaction from './components/transactions/detailTransaction.vue';
 import Login from './components/authentification/login.vue'
 import Register from './components/authentification/register.vue'
 
+
+import ViewProfile from './components/user/profile/viewProfile.vue';
+
 export const routes = [
     {
         name: 'home',
@@ -136,5 +139,10 @@ export const routes = [
         name: "DetailTransaction",
         path: "/detailtransaction/:id",
         component: DetailTransaction
+    },
+    {
+        name: "ViewProfile",
+        path: "/profile/:id",
+        component: ViewProfile
     },
 ];

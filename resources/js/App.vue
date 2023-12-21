@@ -1,27 +1,71 @@
 <template>
-    <div class="container">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div id="app" class="container">
+        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #64B2B3;">
             <div class="collapse navbar-collapse">
-                <router-link to="/" class="btn btn-secondary">Home</router-link>
+                <img src="../img/logotipo.png" width="10%" />
+                <router-link to="/" class="btn btn-success" style="margin-right: 5px;" data-toggle="tooltip" title="Home page"><b>Home</b></router-link>
+               
+               
                 <div v-if="isLoggedIn && isUserAdmin" class="navbar-nav">
-                    <router-link to="/users" class="btn btn-primary">Users</router-link>
-                    <router-link to="/items" class="btn btn-primary">Items</router-link>
-                    <router-link to="/categories" class="btn btn-primary">Categories</router-link>
-                    <router-link to="/types" class="btn btn-primary">Types</router-link>
-                    <router-link to="/inventories" class="btn btn-primary">Inventories</router-link>
-                    <router-link to="/transactions" class="btn btn-primary">Transactions</router-link>
+                    <router-link to="/users" class="btn btn-outline-light"
+                        style="margin-right: 5px;" data-toggle="tooltip" title="List of all users"><b>Users</b>
+                    </router-link >
+                    <router-link to="/items" class="btn btn-outline-light"
+                        style="margin-right: 5px;" data-toggle="tooltip" title="List of all items"><b>Items</b>
+                    </router-link>
+                    <router-link to="/categories" class="btn btn-outline-light"
+                        style="margin-right: 5px;" data-toggle="tooltip" title="Available item categories"><b>Categories</b>
+                    </router-link>
+                    <router-link to="/types" class="btn btn-outline-light"
+                        style="margin-right: 5px;" data-toggle="tooltip" title="Available item types"><b>Types</b>
+                    </router-link>
+                    <router-link to="/inventories" class="btn btn-outline-light"
+                        style="margin-right: 5px;" data-toggle="tooltip" title="Users inventories"><b>Inventories</b>
+                    </router-link>
+                    <router-link to="/transactions" class="btn btn-outline-light"
+                        style="margin-right: 5px;" data-toggle="tooltip" title="List of all transactions"><b>Transactions</b>
+                    </router-link>
                 </div>
+           
+                <div v-if="isLoggedIn && !isUserAdmin" class="navbar-nav">
+                    <router-link to="/profile/2" class="btn btn-outline-light"
+                        style="margin-right: 5px;" data-toggle="tooltip" title="My profile"><b>Profile</b>
+                    </router-link >
+                    <router-link to="#" class="btn btn-outline-light"
+                        style="margin-right: 5px;" data-toggle="tooltip" title="My inventory"><b>Inventory</b>
+                    </router-link >
+                    <router-link to="#" class="btn btn-outline-light"
+                        style="margin-right: 5px;" data-toggle="tooltip" title="List of all items"><b>Item List</b>
+                    </router-link >
+                    <router-link to="#" class="btn btn-outline-light"
+                        style="margin-right: 5px;" data-toggle="tooltip" title="My transactions"><b>Transactions</b>
+                    </router-link >
+                   
+                </div>
+           
+           
+           
             </div>
 
-            <div v-if="!isLoggedIn">
-                <router-link class="btn btn-secondary" to="/login">Login</router-link>
-                <router-link class="btn btn-secondary" to="/register">Register</router-link>
+            <div v-if="!isLoggedIn" style="display: flex;">
+                <router-link class="btn btn-light" to="/login" style="margin-right: 5px;"><b>Login</b></router-link>
+                <router-link class="btn btn-warning" to="/register" style="margin-right: 20px;"><b>Register</b></router-link>
             </div>
 
-            <button v-if="isLoggedIn" class="btn btn-danger" @click="logout">Logout</button>
+            <button v-if="isLoggedIn" class="btn btn-danger" @click="logout"
+                style="margin-right: 20px;"><b>Logout</b></button>
         </nav>
 
         <router-view></router-view>
+
+        <footer style="background-color: #64B2B3; color: #fff; padding: 10px; text-align: center;">
+            <p><b>Developed by: Amin Otaku</b> <img src="../img/aminOtaku.png" width="7%"/></p>
+           
+    <p><b>&copy; 2023 MiniMania Tracker. All rights reserved.</b></p>
+    
+</footer>
+
+
     </div>
 </template>
   
@@ -56,7 +100,7 @@ const logout = async () => {
         localStorage.removeItem('role');
         checkAuthStatus();
         router.push('/login');
-        
+
     } catch (err) {
         console.error(err);
         alert(err);
@@ -64,7 +108,13 @@ const logout = async () => {
 };
 
 onMounted(() => {
-   
+
     checkAuthStatus();
 });
 </script>
+<style scoped>#app {
+    background: rgba(255, 255, 255, 0.3) url('../img/background.png') center/cover no-repeat fixed;
+
+    height: 100vh;
+    /* Make sure the background covers the entire viewport height */
+}</style>

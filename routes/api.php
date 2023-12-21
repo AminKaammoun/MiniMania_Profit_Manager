@@ -10,6 +10,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TypeController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\InventoryItemController;
 
 use App\Models\Transaction;
@@ -59,6 +60,7 @@ Route::middleware('api')->group(function () {
    Route::resource('users', UserController::class);
 });
 
+
 Route::middleware('api')->group(function () {
    Route::resource('roles', RoleController::class);
 });
@@ -71,6 +73,7 @@ Route::middleware('api')->group(function () {
    Route::resource('inventoryitems', InventoryItemController::class);
 });
 
+Route::get('/profile/{id}', [ProfileController::class, 'show']);
 
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/register', [RegisterController::class, 'register']);

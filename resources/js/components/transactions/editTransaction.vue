@@ -87,6 +87,7 @@ const fetchTransaction = async () => {
 
 }
 
+
 const getusers = async () => {
     await axios.get("http://localhost:8000/api/users")
         .then(res => {
@@ -116,6 +117,7 @@ const updateTransaction = async () => {
         .then(() => {
             visible.value = false;
             toastRef.value.add({ severity: 'info', summary: 'Updated', detail: 'Transaction Updated', life: 3000 });
+            router.go(0);
         })
         .catch((err) => { console.error(err) 
             toastRef.value.add({ severity: 'error', summary: 'Error', detail: 'Transaction can not be deleted', life: 3000 });
