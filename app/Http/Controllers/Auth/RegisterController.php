@@ -25,6 +25,7 @@ class RegisterController extends Controller
         ]);
         
         Inventory::create([
+            'id' => $user->id,
             'userId' => $user->id,
         ]);
         

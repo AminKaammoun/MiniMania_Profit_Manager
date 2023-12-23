@@ -1,10 +1,12 @@
 <template>
     <div>
+        <Toast ref="toastRef" />
         <div class="row justify-content-center">
+
             <div class="col-md-8">
 
-                <div class="card card-default">
-                    <div class="card-header">Login</div>
+                <div class="card card-default" style="background-color: rgba(255, 255, 255, 0.5);">
+                    <div class="card-header"><b>Login</b></div>
                     <div class="card-body">
                         <form>
                             <div class="form-group row">
@@ -32,7 +34,7 @@
                             <div class="form-group row mb-0">
                                 <div class="col-md-8 offset-md-4">
 
-                                    <button type="submit" class="btn btn-primary" @click="handleLogin">
+                                    <button type="submit" class="btn btn-outline-primary" @click="handleLogin">
 
                                         Login
                                     </button>
@@ -48,38 +50,38 @@
 <script setup>
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { ref } from 'vue';
 import CryptoJS from 'crypto-js';
-const router = useRouter()
-let user = {}
+import Toast from 'primevue/toast';
+
+
+const toastRef = ref(null);
+const router = useRouter();
+let user = {};
+
 const handleLogin = async () => {
     axios.post('http://localhost:8000/api/login/', user)
-
         .then((response) => {
-            router.push("/")
-            console.log(response.data.user)
-            localStorage.setItem('user', response.data.user.name)
-            localStorage.setItem('token', response.data.token)
-            const hashedData = CryptoJS.SHA256(response.data.user.role_id).toString();
-            localStorage.setItem('role', hashedData);
+          
+            const hashedId = CryptoJS.SHA256(response.data.user.id.toString()).toString();
+            const hashedRole = CryptoJS.SHA256(response.data.user.role_id.toString()).toString();
+
+            localStorage.setItem('id', hashedId);
+
+            localStorage.setItem('role', hashedRole);
+
+            localStorage.setItem('user', response.data.user.name);
+            localStorage.setItem('token', response.data.token);
+
             window.location.href = '/';
+            toastRef.value.add({ severity: 'success', summary: 'Login', detail: 'Welcome back ' + user.name, life: 3000 });
         })
         .catch(err => {
-            console.log(err);
-            alert(err)
-        })
+            toastRef.value.add({ severity: 'error', summary: 'Error', detail: 'Wrong login information', life: 3000 });
+        });
+};
 
-}
 
 
 </script>
-<style scoped>
-.marge {
-    position: fixed;
-    width: 100%;
-    height: 300px;
-    margin: 5% auto;
-    padding: 20px;
-    border: 5px solid #ccc;
-    background-color: #fff;
-}
-</style>
+<style scoped></style>

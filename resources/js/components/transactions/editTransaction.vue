@@ -1,7 +1,7 @@
 <template>
     <div>
         <Toast ref="toastRef" />
-        <button type="button" class="btn btn-outline-info" @click="visible = true">
+        <button type="button" class="btn btn-outline-info" @click="load">
 
             <i class="fa-solid fa-pen-to-square"></i>Edit
 
@@ -10,7 +10,8 @@
         <form>
             <Dialog v-model:visible="visible">
                 <h3 class="text-center">Edit Transaction</h3>
-                <div class="form-group">
+               
+                <div class="form-group" v-if="isUserAdmin">
                     <label for="user" class="form-label">User</label>
                     <select class="form-select" id="user" v-model="transactions.userId">
                         <option v-for="userOption in users" :key="userOption.id" :value="userOption.id">
@@ -27,6 +28,7 @@
                         </option>
                     </select>
                 </div>
+                
 
                 <div class="form-group">
                     <label for="item1" class="form-label">Item Name Portuguese</label>
@@ -64,9 +66,10 @@ import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
 import Dialog from 'primevue/dialog';
 import Toast from 'primevue/toast'; 
+import CryptoJS from 'crypto-js';
 
 const router = useRouter();
-const route = useRoute();
+
 import { ref, onMounted } from 'vue';
 
 const toastRef = ref(null);
@@ -75,6 +78,7 @@ const users = ref([])
 const items = ref([])
 const visible = ref(false);
 const props = defineProps(['tra'])
+const isUserAdmin = ref(false);
 
 
 const cancel = () => {
@@ -109,6 +113,17 @@ const getitems = async () => {
         })
 }
 
+const load = async () => {
+    visible.value = true;
+    getitems();
+    getusers();
+    await fetchTransaction();
+}
+
+const checkAuthStatus = () => {
+    
+    isUserAdmin.value = localStorage.getItem('role') === CryptoJS.SHA256('0').toString();
+};
 const updateTransaction = async () => {
     await axios
 
@@ -123,13 +138,10 @@ const updateTransaction = async () => {
             toastRef.value.add({ severity: 'error', summary: 'Error', detail: 'Transaction can not be deleted', life: 3000 });
         })
 }
-
-onMounted(async () => {
-    getitems();
-    getusers();
-    await fetchTransaction();
-
+onMounted(() => {
+    checkAuthStatus();
 });
+
 </script>
 <style lang="scss" scoped>
 @import '@fortawesome/fontawesome-free/css/all.css';

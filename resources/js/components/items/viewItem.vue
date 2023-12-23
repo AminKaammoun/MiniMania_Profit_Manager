@@ -103,7 +103,7 @@ const getitems = async () => {
 };
 
 const isUserAdmin = () => {
-  return localStorage.getItem('role') === CryptoJS.SHA256(0).toString();
+  return localStorage.getItem('role') === CryptoJS.SHA256('0').toString();
 };
 
 const gettypes = async () => {
@@ -138,7 +138,7 @@ const getcategories = async () => {
 onMounted(() => {
   getitems();
   gettypes();
-  getTypeById();
+
   getcategories();
   
 });

@@ -172,6 +172,10 @@ const viewTransaction = () => {
     toastRef.value.add({ severity: 'warn', summary: 'Coming soon!', detail: 'Not available yet', life: 3000 });
 }
 
+const formatNumber = (number) => {
+    return parseFloat(number).toLocaleString('en-US', { maximumFractionDigits: 2 });
+};
+
 </script>
 <style scoped>
 @import '@fortawesome/fontawesome-free/css/all.css';

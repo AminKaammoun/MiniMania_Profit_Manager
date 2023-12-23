@@ -1,5 +1,5 @@
 <template>
-    <div class="profile-container">
+    <div class="profile-container" v-if="havePermission()">
         <h1>My Profile</h1>
 
         <div class="profile-info">
@@ -11,11 +11,13 @@
                         <template #header>
                             <img alt="user header" src="../../../../img/inventory.png" />
                         </template>
-                        <template #title><center>Inventory</center></template>
+                        <template #title>
+                            <center>Inventory</center>
+                        </template>
                         <template #content>
                             <div class="card-content">
                                 <p class="m-0">
-                                    <center><b>{{ formatNumber(0) }}</b></center>
+                                    <center><b>{{ formatNumber(user.inventoryNumber) }}</b></center>
                                 </p>
                             </div>
                         </template>
@@ -28,7 +30,7 @@
                         <template #content>
                             <div class="card-content">
                                 <p class="m-0">
-                                    <center><b>{{ formatNumber(0) }}</b></center>
+                                    <center><b>{{ formatNumber(user.transactionNumber) }}</b></center>
                                 </p>
                             </div>
                         </template>
@@ -50,37 +52,53 @@
 
                 <div class="profile-data">
                     <p><strong>All time spent:</strong></p>
-                    <p><b>{{ 0 }} <img src="../../../../img/goldCoin.png" alt="Custom Icon" class="custom-icon"/></b></p>
+                    <p><b>{{ formatNumber(user.totalSpent) }} <img src="../../../../img/goldCoin.png" alt="Custom Icon"
+                                class="custom-icon" /></b></p>
                 </div>
 
                 <div class="profile-data">
                     <p><strong>All time gained:</strong></p>
-                    <p><b>{{ 0 }} <img src="../../../../img/goldCoin.png" alt="Custom Icon" class="custom-icon"/></b></p>
+                    <p><b>{{ formatNumber(user.totalSold) }} <img src="../../../../img/goldCoin.png" alt="Custom Icon"
+                                class="custom-icon" /></b></p>
                 </div>
 
                 <div class="profile-data">
                     <p><strong>All time Profit:</strong></p>
-                    <p><b>{{ 0 }} <img src="../../../../img/goldCoin.png" alt="Custom Icon" class="custom-icon"/></b></p>
+                    <p><b>{{ formatNumber(user.totalProfit) }} <img src="../../../../img/goldCoin.png" alt="Custom Icon"
+                                class="custom-icon" /></b></p>
                 </div>
 
                 <div class="profile-data">
                     <p><strong>Inventory Value:</strong></p>
-                    <p><b>{{ formatNumber(user.inventoryWorth) }} <img src="../../../../img/goldCoin.png" alt="Custom Icon" class="custom-icon"/></b></p>
+                    <p><b>{{ formatNumber(user.inventoryWorth) }} <img src="../../../../img/goldCoin.png" alt="Custom Icon"
+                                class="custom-icon" /></b></p>
                 </div>
 
                 <div class="profile-data">
-                    <p><strong>Balance:</strong></p>
-                    <p><b>{{ formatNumber(user.balance) }} <img src="../../../../img/goldCoin.png" alt="Custom Icon" class="custom-icon"/></b></p>
+                    <p><strong> Balance: </strong></p>
+                    <p><b> <Button class="btn btn-success">
+                                <i class="fa-sharp fa-solid fa-plus-minus"></i>
+                            </Button>
+
+                            {{ formatNumber(user.balance) }} <img src="../../../../img/goldCoin.png" alt="Custom Icon"
+                                class="custom-icon" /></b></p>
                 </div>
                 <br><br>
 
                 <div class="profile-data">
                     <p><strong>Account Value:</strong></p>
-                    <p><b>{{ formatNumber(user.balance + user.inventoryWorth) }} </b><img src="../../../../img/goldCoin.png" alt="Custom Icon" class="custom-icon"/></p>
+                    <p><b>{{ formatNumber(user.balance + user.inventoryWorth) }} </b><img src="../../../../img/goldCoin.png"
+                            alt="Custom Icon" class="custom-icon" /></p>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="profile-container" v-if="!havePermission()">
+       <p><center style="font-size: 30px;"><b>ERROR 404 NOT FOUND.</b></center></p> 
+
+    </div>
+
 </template>
   
 <script setup>
@@ -88,20 +106,32 @@ import axios from 'axios';
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import Card from 'primevue/card';
+import CryptoJS from 'crypto-js';
 
 const user = ref({});
+const users = ref([]);
+const userId = ref(null);
 
 const fetchProfile = async () => {
+
     try {
         const response = await axios.get(`http://localhost:8000/api/profile/${useRoute().params.id}`);
         user.value = response.data;
     } catch (error) {
         console.error(error);
     }
+
 };
 
+
+const havePermission = () =>{
+    return CryptoJS.SHA256(useRoute().params.id).toString() === localStorage.getItem('id');
+}
+
 onMounted(() => {
-    fetchProfile();
+    if (havePermission()) {
+        fetchProfile();
+    }
 });
 
 const formatNumber = (number) => {
@@ -111,6 +141,7 @@ const formatNumber = (number) => {
   
 <style scoped>
 @import '@fortawesome/fontawesome-free/css/all.css';
+
 .profile-container {
     max-width: 600px;
     margin: 0 auto;
@@ -147,9 +178,9 @@ const formatNumber = (number) => {
 }
 
 img.custom-icon {
-  width: 24px; 
-  height: 28px; 
- 
+    width: 24px;
+    height: 28px;
+
 }
 </style>
   

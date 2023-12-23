@@ -1,8 +1,9 @@
 <template>
     <div>
+        <Toast ref="toastRef" />
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="card card-default">
+                <div class="card card-default" style="background-color: rgba(255, 255, 255, 0.5);">
                     <div class="card-header">Register</div>
 
                     <div class="card-body">
@@ -54,7 +55,7 @@
                             <div class="form-group row mb-0">
                                 <div class="col-md-8 offset-md-4">
 
-                                    <button type="submit" class="btn btn-primary" @click="handleSubmit">
+                                    <button type="submit" class="btn btn-outline-primary" @click="handleSubmit">
 
                                         Register
                                     </button>
@@ -71,19 +72,23 @@
 <script setup>
 import axios from "axios"
 import { useRouter } from 'vue-router';
+import Toast from 'primevue/toast'; 
+import {ref} from 'vue';
+
 const router = useRouter()
 let user = {}
+const toastRef = ref(null);
 
 const handleSubmit = async () => {
-    axios.post('http://localhost:8000/api/register/', user)
-
-        .then(response => {
-            console.log(response)
-            router.replace({ name: 'login' })
-            
-        })
-        .catch(err => { console.log(err); alert(err) })
-
+    try {
+        const response = await axios.post('http://localhost:8000/api/register/', user);
+        console.log(response);
+        router.replace({ name: 'login' });
+        toastRef.value.add({ severity: 'success', summary: 'Successfully registered', detail: 'You can now login!', life: 3000 });
+    } catch (err) {
+        console.error(err);
+        toastRef.value.add({ severity: 'error', summary: 'Error', detail: 'Please fill the whole form', life: 3000 });
+    }
 }
 </script>
 <style scoped>

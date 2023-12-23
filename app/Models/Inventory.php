@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Inventory extends Model
 {
     use HasFactory;
-    protected $fillable = ['userId'];
+    protected $fillable = ['id','userId'];
      
     public function user()
     {

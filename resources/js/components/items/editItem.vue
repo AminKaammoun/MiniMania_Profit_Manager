@@ -1,7 +1,7 @@
 <template>
   <div>
     <Toast ref="toastRef" />
-    <button type="button" class="btn btn-outline-success" @click="visible = true">
+    <button type="button" class="btn btn-outline-success" @click="load()">
       <span>
         <i class="fa-solid fa-pen-to-square"></i>
         Edit
@@ -168,10 +168,15 @@ const cancel = () => {
   visible.value = false;
 };
 
-onMounted(async () => {
+const load = async () => {
+  visible.value = true;
   gettypes();
   getcategories();
   await fetchItem();
+}
+
+onMounted(async () => {
+
 });
 </script>
 <style lang="scss" scoped>

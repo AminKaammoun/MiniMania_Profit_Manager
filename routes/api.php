@@ -16,6 +16,8 @@ use App\Http\Controllers\InventoryItemController;
 use App\Models\Transaction;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\UserInventoryController;
+use App\Http\Controllers\UserTransactionController;
 use App\Models\ItemInventor;
 
 /*
@@ -65,15 +67,24 @@ Route::middleware('api')->group(function () {
    Route::resource('roles', RoleController::class);
 });
 
-Route::middleware('api')->group(function () {
-   Route::resource('transactions', TransactionController::class);
-});
 
 Route::middleware('api')->group(function () {
    Route::resource('inventoryitems', InventoryItemController::class);
 });
 
 Route::get('/profile/{id}', [ProfileController::class, 'show']);
+
+Route::middleware('api')->group(function () {
+   Route::resource('inventory', UserInventoryController::class);
+});
+
+
+Route::middleware('api')->group(function () {
+   Route::resource('transaction', UserTransactionController::class);
+});
+
+
+
 
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/register', [RegisterController::class, 'register']);

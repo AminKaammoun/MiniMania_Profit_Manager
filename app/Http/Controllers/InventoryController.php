@@ -22,6 +22,7 @@ class InventoryController extends Controller
     public function store(Request $request)
     {
         $inventory = new Inventory([
+            
             'userId' => $request->input('userId')
         ]);
         $inventory->save();

@@ -27,6 +27,8 @@ import Register from './components/authentification/register.vue'
 
 
 import ViewProfile from './components/user/profile/viewProfile.vue';
+import ViewPersonalInventory from './components/user/inventory/viewPersonalInventory.vue';
+import ViewPersonalTransaction from './components/user/transaction/ViewPersonaltransaction.vue'
 
 export const routes = [
     {
@@ -145,4 +147,15 @@ export const routes = [
         path: "/profile/:id",
         component: ViewProfile
     },
+
+    {
+        name: "ViewPersonalInventory",
+        path: "/inventory/:id",
+        component: ViewPersonalInventory
+    },
+    {
+        name: "ViewPersonalTransaction",
+        path: "/transaction/:id",
+        component: ViewPersonalTransaction
+    }
 ];
